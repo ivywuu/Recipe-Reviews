@@ -1,0 +1,46 @@
+
+
+{% extends 'main.html' %}
+{% block content %}
+
+<style>
+  .image-container {
+    background-size:cover;
+    background-repeat:no-repeat;
+    width:250px;
+    height:250px;
+  }  
+  .tool{
+    text-align: center;
+  }
+
+  .label{
+    float: center;
+  }
+  
+  li{
+    list-style: none;
+  }
+
+  .grid-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 5px;
+  }
+</style>
+<h1>Tools</h1>
+
+<div class="grid-container">
+  {% for tool in tools%}
+    <div class="tool">
+      <img src="{{tool.pic.url}}" alt="" class="image-container"/>
+      <li>
+        <label for="">{{tool.name}}</label>
+      </li>
+      <li>
+        <label for="">{{tool.brand}}</label>
+      </li>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
