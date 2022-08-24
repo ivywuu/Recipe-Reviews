@@ -2,7 +2,7 @@ from asyncio.windows_events import NULL
 from pyexpat import model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from datetime import timedelta
 # Create your models here.
 
 class Tool(models.Model):
@@ -38,7 +38,50 @@ class IngredientAmount(models.Model):
   def __str__(self):
     return "%s%s %s" % (self.amount, self.unit, self.ingredient.name)
 
+class Instruction(models.Model):
+  class Unit(models.TextChoices):
+    Celsius = 'C',_('C')
+    Farenheit = 'F', _('F')
+
+  class UnitT(models.TextChoices):
+    Day = 'day',_('day')
+    Hour = 'hr', _('hr')
+    Minute = 'min', _('min')
+    Second = 's', _('s')
+    OverNight = 'overnight'
+
+  instr = models.CharField(max_length=50,default='')
+  temp_num = models.IntegerField(default=0,blank=True)
+  temp_unit = models.CharField(max_length=1,choices = Unit.choices, default=Unit.Celsius,blank=True)
+  time_num = models.IntegerField(default=0,blank=True)
+  time_unit = models.CharField(max_length=10,choices = UnitT.choices, default=UnitT.Minute,blank=True)
+
+  def __str__(self):
+    if self.temp_num != 0 and self.time_num != 0:
+      return "%s %s %s %s %s" % (self.instr, self.temp_num, self.temp_unit,self.time_num,self.time_unit)
+    elif self.temp_num == 0 and self.time_num != 0:
+      return "%s %s %s" % (self.instr, self.time_num,self.time_unit)
+    elif self.temp_num != 0 and self.time_num == 0:
+      return "%s %s %s" % (self.instr, self.temp_num, self.temp_unit)
+    return "%s" % (self.instr)
+
+
+class InstructionIngredient(models.Model):
+  instruction = models.ForeignKey(Instruction,on_delete=models.CASCADE,default=NULL)
+  ingredient = models.ManyToManyField(IngredientAmount)
   
+  def __str__(self):
+    ingredients = ", ".join(str(i.ingredient.name) for i in self.ingredient.all())
+    return "%s %s" % (self.instruction, ingredients)
+
+# class InstructionAll(models.Model):
+#   instruction = models.ManyToManyField(Instruction)
+#   instruction_i = models.ManyToManyField(InstructionIngredient)
+
+#   def __str__(self):
+#     return "%s %s" % (self.instruction, self.instruction_i)
+
+
 class Recipe(models.Model):
   ingr_amount = models.ManyToManyField(IngredientAmount)
   tools = models.ManyToManyField(Tool)
