@@ -32,11 +32,22 @@ class IngredientAmount(models.Model):
     LITER = 'L',_('L')
 
   ingredient = models.ForeignKey(Ingredient,on_delete=models.CASCADE,default=NULL)
-  unit = models.CharField(max_length=4, choices = Unit.choices, default=Unit.GRAM)
-  amount = models.IntegerField(default=0)
+  unit = models.CharField(max_length=4, choices = Unit.choices, default='',blank=True)
+  amount = models.IntegerField(default=0,blank=True)
 
   def __str__(self):
-    return "%s%s %s" % (self.amount, self.unit, self.ingredient.name)
+    if self.amount !=0 and self.unit !='':
+      return "%s%s %s" % (self.amount, self.unit, self.ingredient.name)
+    elif self.amount !=0 and self.unit =='':
+      return "%s %s" % (self.amount, self.ingredient.name)
+    return self.ingredient.name
+
+class simpleInstruction(models.Model):
+  inst = models.CharField(max_length=50,default='')
+
+  def __str__(self):
+    return f'{self.inst}'
+
 
 class Instruction(models.Model):
   class Unit(models.TextChoices):
@@ -50,7 +61,7 @@ class Instruction(models.Model):
     Second = 's', _('s')
     OverNight = 'overnight'
 
-  instr = models.CharField(max_length=50,default='')
+  instrc = models.ForeignKey(simpleInstruction,on_delete=models.CASCADE,default=NULL)
   temp_num = models.IntegerField(default=0,blank=True)
   temp_unit = models.CharField(max_length=1,choices = Unit.choices, default=Unit.Celsius,blank=True)
   time_num = models.IntegerField(default=0,blank=True)
@@ -58,21 +69,21 @@ class Instruction(models.Model):
 
   def __str__(self):
     if self.temp_num != 0 and self.time_num != 0:
-      return "%s %s %s %s %s" % (self.instr, self.temp_num, self.temp_unit,self.time_num,self.time_unit)
+      return "%s %s %s %s %s" % (self.instrc, self.temp_num, self.temp_unit,self.time_num,self.time_unit)
     elif self.temp_num == 0 and self.time_num != 0:
-      return "%s %s %s" % (self.instr, self.time_num,self.time_unit)
+      return "%s %s %s" % (self.instrc, self.time_num,self.time_unit)
     elif self.temp_num != 0 and self.time_num == 0:
-      return "%s %s %s" % (self.instr, self.temp_num, self.temp_unit)
-    return "%s" % (self.instr)
+      return "%s %s %s" % (self.instrc, self.temp_num, self.temp_unit)
+    return str(self.instrc)
 
 
 class InstructionIngredient(models.Model):
-  instruction = models.ForeignKey(Instruction,on_delete=models.CASCADE,default=NULL)
+  instruction = models.ForeignKey(simpleInstruction,on_delete=models.CASCADE,default=NULL)
   ingredient = models.ManyToManyField(IngredientAmount)
   
   def __str__(self):
     ingredients = ", ".join(str(i.ingredient.name) for i in self.ingredient.all())
-    return "%s %s" % (self.instruction, ingredients)
+    return "%s %s" % (f'{self.instruction}', ingredients)
 
 
 class InstructionStep(models.Model):
@@ -88,12 +99,21 @@ class InstructionStep(models.Model):
 
 
 class Recipe(models.Model):
-  ingr_amount = models.ManyToManyField(IngredientAmount)
+  instructions = models.ManyToManyField(InstructionStep)
   tools = models.ManyToManyField(Tool)
 
+  class Topics(models.TextChoices):
+    Bread = 'Bread',_('Bread')
+    Cake = 'Cake', _('Cake')
+    Cookies = 'Cookies', _('Cookies')
+    Other = 'Other', _('Other')
+
   rating = models.IntegerField(default=0)
+  servings = models.IntegerField(default=0)
   title = models.CharField(max_length=200)
   review = models.TextField()
+  link = models.URLField(default=NULL)
+  topic = models.CharField(max_length=10,choices = Topics.choices, default=Topics.Other)
 
   def __str__(self):
     return self.title
