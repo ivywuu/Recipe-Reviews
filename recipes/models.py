@@ -74,12 +74,17 @@ class InstructionIngredient(models.Model):
     ingredients = ", ".join(str(i.ingredient.name) for i in self.ingredient.all())
     return "%s %s" % (self.instruction, ingredients)
 
-# class InstructionAll(models.Model):
-#   instruction = models.ManyToManyField(Instruction)
-#   instruction_i = models.ManyToManyField(InstructionIngredient)
 
-#   def __str__(self):
-#     return "%s %s" % (self.instruction, self.instruction_i)
+class InstructionStep(models.Model):
+  step = models.IntegerField(default=1)
+  instruction = models.ForeignKey(Instruction,on_delete=models.CASCADE,null=True,blank=True,default=NULL)
+  instruct_i = models.ForeignKey(InstructionIngredient,on_delete=models.CASCADE,null=True,blank=True,default=NULL)
+
+  def __str__(self):
+    if self.instruction:
+      return "Step %s. %s" % (self.step, self.instruction)
+    else:
+      return "Step %s. %s" % (self.step, self.instruct_i)
 
 
 class Recipe(models.Model):
