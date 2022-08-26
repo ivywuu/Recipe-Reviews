@@ -72,6 +72,9 @@ class Instruction(models.Model):
   description = models.TextField()
   rec = models.ForeignKey(Recipe,on_delete=models.CASCADE,default=NULL)
 
+  class Meta:
+    ordering =['-step']
+
   def __str__(self):
     return "%s : %s. %s" % (self.rec,self.step, self.description)
 
