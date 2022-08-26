@@ -53,7 +53,6 @@ def tool(request):
   context = {'tools':tools}
   return render(request,'recipes/tools.html',context)
 
-@login_required(login_url='login')
 def addRecipeRec(request):
   form = RecipeRecForm()
   if request.method == 'POST':
