@@ -1,12 +1,14 @@
 from curses import REPORT_MOUSE_POSITION
-from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from recipes.models import Recipe,Tool,IngredientAmount,Ingredient
+from recipes.models import Recipe,Tool,IngredientAmount,Ingredient,Instruction
 
 class ToolSerializer(serializers.ModelSerializer):
+  pic = serializers.ImageField(
+            max_length=None, use_url=True
+        )
   class Meta:
     model = Tool
-    fields = '__all__'
+    fields = ('name','brand','pic')
 
 
 class IngredientAmountSerialzier(serializers.ModelSerializer):
@@ -16,15 +18,28 @@ class IngredientAmountSerialzier(serializers.ModelSerializer):
     model = IngredientAmount
     fields = ('ingredient','amount','unit')
 
-class IngredientSerializer(ModelSerializer):
-  ingredientAmounts = IngredientAmountSerialzier(many=True)
+class IngredientSerializer(serializers.ModelSerializer):
+  pic = serializers.ImageField(
+            max_length=None, use_url=True
+        )
   class Meta:
     model = Ingredient
-    fields = ('name','brand','ingredientAmounts')
+    fields = ('name','brand','pic')
+
+class InstructionSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Instruction
+    fields = ('step','description')
+
 
 class RecipeSerializer(serializers.ModelSerializer):
   tools = ToolSerializer(many=True)
   ingredientAmounts = IngredientAmountSerialzier(many=True)
+  instructions = InstructionSerializer(many=True)
+  pic = serializers.ImageField(
+            max_length=None, use_url=True
+        )
   class Meta:
     model = Recipe
-    fields = ('title','topic','rating','servings','ingredientAmounts','review','tools')
+    fields = ('title','topic','rating','servings','pic','ingredientAmounts','tools','instructions','review')
+

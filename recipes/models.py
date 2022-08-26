@@ -32,6 +32,7 @@ class Recipe(models.Model):
 
   topic = models.CharField(max_length=10,choices = Topics.choices, default=Topics.Other)
   title = models.CharField(max_length=200)
+  pic = models.ImageField(blank=True,default=NULL)
   # link = models.URLField(default=NULL,blank=True,null=True)
   servings = models.IntegerField(default=0,blank=True)
   rating = models.IntegerField(default=0,         validators=[
@@ -70,10 +71,10 @@ class IngredientAmount(models.Model):
 class Instruction(models.Model):
   step = models.IntegerField(default=1)
   description = models.TextField()
-  rec = models.ForeignKey(Recipe,on_delete=models.CASCADE,default=NULL)
+  rec =  models.ForeignKey(Recipe,on_delete=models.CASCADE,default=None, related_name='instructions')
 
   class Meta:
-    ordering =['-step']
+    ordering =['step']
 
   def __str__(self):
     return "%s : %s. %s" % (self.rec,self.step, self.description)

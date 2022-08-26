@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from recipes.models import Ingredient, Recipe,Tool,IngredientAmount
-from .serializers import RecipeSerializer,ToolSerializer,IngredientAmountSerialzier,IngredientSerializer
+from recipes.models import Ingredient, Recipe,Tool,IngredientAmount,Instruction
+from .serializers import RecipeSerializer,ToolSerializer,IngredientAmountSerialzier,IngredientSerializer,InstructionSerializer
 @api_view(['GET'])
 def getRoutes(request):
   routes = [
@@ -9,6 +9,7 @@ def getRoutes(request):
     'GET /api/recipes',
     'GET /api/tools',
     'GET /api/ingredient',
+    'GET /api/instruction',
     'GET /api/ingredientAmount',
   ]
 
@@ -37,4 +38,10 @@ def getIngredients(request):
 def getIngredientAmount(request):
   ingredientAmount = IngredientAmount.objects.all()
   serializer = IngredientAmountSerialzier(ingredientAmount,many=True)
+  return Response(serializer.data)
+
+@api_view(['GET'])
+def getInstruction(request):
+  instruction = Instruction.objects.all()
+  serializer = InstructionSerializer(instruction,many=True)
   return Response(serializer.data)

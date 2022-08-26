@@ -7,4 +7,5 @@ urlpatterns = [
   path('tools/', views.getTools),
   path('ingredient/', views.getIngredients),
   path('ingredientAmount/', views.getIngredientAmount),
+  path('instruction/', views.getInstruction),
 ]
