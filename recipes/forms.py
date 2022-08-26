@@ -7,6 +7,7 @@ class RecipeRecForm(ModelForm):
     model = RecipeRec
     fields = '__all__'
 
+
 class ToolForm(ModelForm):
   class Meta:
     model = Tool

@@ -1,4 +1,17 @@
 {% extends 'main.html' %}
 {% block content %}
 <h1>Recipes</h1>
+
+<div class="recipe-container">
+  {% for rec in recipe%}
+    <h2>{{rec.title}}</h2>
+    <ul>
+      {% for i in rec.instructions.all%}
+      <li>
+        {{i}}
+      </li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</div>
 {% endblock %}

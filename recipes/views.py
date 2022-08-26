@@ -12,7 +12,9 @@ def recipes(request):
   return render(request,'recipes/recipes.html')
 
 def pantry(request):
-  return render(request,'recipes/pantry.html')
+  pantry = Ingredient.objects.all()
+  context = {'pantry':pantry}
+  return render(request,'recipes/pantry.html',context)
 
 def tool(request):
   tools = Tool.objects.all()
