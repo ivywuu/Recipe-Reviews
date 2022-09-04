@@ -54,10 +54,10 @@ class IngredientAmount(models.Model):
     MILLILITER = 'mL',_('mL')
     LITER = 'L',_('L')
 
-  ingredient = models.ForeignKey(Ingredient,on_delete=models.CASCADE,default=NULL)
+  ingredient = models.ForeignKey(Ingredient,on_delete=models.CASCADE,default=None,related_name='ingredientAmounts')
   unit = models.CharField(max_length=4, choices = Unit.choices, default='',blank=True)
   amount = models.IntegerField(default=0,blank=True)
-  rec = models.ForeignKey(Recipe,on_delete=models.CASCADE,default=NULL)
+  rec = models.ForeignKey(Recipe,on_delete=models.CASCADE,default=None,related_name='ingredientAmounts')
 
   def __str__(self):
     if self.amount !=0 and self.unit !='':

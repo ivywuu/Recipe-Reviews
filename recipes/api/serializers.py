@@ -1,14 +1,30 @@
 from curses import REPORT_MOUSE_POSITION
 from rest_framework.serializers import ModelSerializer
-from recipes.models import Recipe,Tool
+from rest_framework import serializers
+from recipes.models import Recipe,Tool,IngredientAmount,Ingredient
 
-class ToolSerializer(ModelSerializer):
+class ToolSerializer(serializers.ModelSerializer):
   class Meta:
     model = Tool
     fields = '__all__'
 
-class RecipeSerializer(ModelSerializer):
+
+class IngredientAmountSerialzier(serializers.ModelSerializer):
+  ingredient = serializers.StringRelatedField(source='ingredient.name')
+
+  class Meta:
+    model = IngredientAmount
+    fields = ('ingredient','amount','unit')
+
+class IngredientSerializer(ModelSerializer):
+  ingredientAmounts = IngredientAmountSerialzier(many=True)
+  class Meta:
+    model = Ingredient
+    fields = ('name','brand','ingredientAmounts')
+
+class RecipeSerializer(serializers.ModelSerializer):
   tools = ToolSerializer(many=True)
+  ingredientAmounts = IngredientAmountSerialzier(many=True)
   class Meta:
     model = Recipe
-    fields = ('tools','title','topic')
+    fields = ('title','topic','rating','servings','ingredientAmounts','review','tools')
