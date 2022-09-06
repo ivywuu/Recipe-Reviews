@@ -29,6 +29,7 @@ def getRecipes(request):
 def getTools(request):
   tools = Tool.objects.all()
   serializer = ToolSerializer(tools,many=True)
+  return Response(serializer.data)
 
 @api_view(['GET'])
 def getIngredients(request):
