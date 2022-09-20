@@ -8,4 +8,5 @@ urlpatterns = [
   path('ingredient/', views.getIngredients),
   path('ingredientAmount/', views.getIngredientAmount),
   path('instruction/', views.getInstruction),
+  path('ingredientGroup/', views.getIngredientGroup),
 ]

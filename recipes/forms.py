@@ -1,6 +1,7 @@
+from pyexpat import model
 from django.forms import ModelForm
-from .models import Tool,Ingredient,RecipeRec
-
+from .models import Tool,Ingredient,RecipeRec,Recipe
+from django import forms
 
 class RecipeRecForm(ModelForm):
   class Meta:
@@ -18,5 +19,9 @@ class IngredientForm(ModelForm):
     model = Ingredient
     fields = '__all__'
 
+class RecipeForm(ModelForm):
+  class Meta:
+    model = Recipe
+    fields = '__all__'
     
     

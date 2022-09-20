@@ -1,9 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from recipes.models import Ingredient, Recipe,Tool,IngredientAmount,Instruction
+from recipes.models import Ingredient, Recipe,Tool,IngredientAmount,Instruction,IngredientGroup
 from .serializers import RecipeSerializer,ToolSerializer,IngredientAmountSerialzier,IngredientSerializer,InstructionSerializer
 from recipes.models import Ingredient, Recipe,Tool
-from .serializers import RecipeSerializer,ToolSerializer
+from .serializers import RecipeSerializer,ToolSerializer,IngredientGroupSerializer
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -14,9 +14,16 @@ def getRoutes(request):
     'GET /api/ingredient',
     'GET /api/instruction',
     'GET /api/ingredientAmount',
+    'GET /api/ingredientGroup',
   ]
 
   return Response(routes)
+
+@api_view(['GET'])
+def getIngredientGroup(request):
+  groups = IngredientGroup.objects.all()
+  serializer = IngredientGroupSerializer(groups,many=True)
+  return Response(serializer.data)
 
 @api_view(['GET'])
 def getRecipes(request):

@@ -11,4 +11,5 @@ urlpatterns = [
     path('tool', views.tool, name="tool"),
 
     path('add-rec/',views.addRecipeRec, name="add-rec"),
+    path('add-recipe/',views.addRecipe, name="add-recipe"),
 ]

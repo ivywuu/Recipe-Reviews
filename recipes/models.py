@@ -22,7 +22,7 @@ class Ingredient(models.Model):
     return self.name
 
 class Recipe(models.Model):
-  tools = models.ManyToManyField(Tool)
+  # tools = models.ManyToManyField(Tool)
 
   class Topics(models.TextChoices):
     Bread = 'Bread',_('Bread')
@@ -32,8 +32,8 @@ class Recipe(models.Model):
 
   topic = models.CharField(max_length=10,choices = Topics.choices, default=Topics.Other)
   title = models.CharField(max_length=200)
-  pic = models.ImageField(blank=True,default=NULL)
-  # link = models.URLField(default=NULL,blank=True,null=True)
+  pic = models.ImageField(blank=True,default=None)
+  link = models.URLField(default=None,blank=True,null=True)
   servings = models.IntegerField(default=0,blank=True)
   rating = models.IntegerField(default=0,         validators=[
             MaxValueValidator(5),
@@ -45,6 +45,15 @@ class Recipe(models.Model):
     return self.title
 
 
+class IngredientGroup(models.Model):
+  name = models.CharField(max_length=50, blank=True)
+  rec = models.ForeignKey(Recipe,on_delete=models.CASCADE,default=None,related_name='ingredientGroups')  
+
+  def __str__(self):
+    return "%s: %s" % (self.rec,self.name)
+
+
+
 class IngredientAmount(models.Model):
 
   class Unit(models.TextChoices):
@@ -52,20 +61,21 @@ class IngredientAmount(models.Model):
     TABLESPOON = 'tbsp', _('tbsp')
     CUP = 'cup',_('cup')
     GRAM = 'g',_('g')
+    KILOGRAM = 'kg',_('kg')
     MILLILITER = 'mL',_('mL')
     LITER = 'L',_('L')
 
   ingredient = models.ForeignKey(Ingredient,on_delete=models.CASCADE,default=None,related_name='ingredientAmounts')
   unit = models.CharField(max_length=4, choices = Unit.choices, default='',blank=True)
   amount = models.IntegerField(default=0,blank=True)
-  rec = models.ForeignKey(Recipe,on_delete=models.CASCADE,default=None,related_name='ingredientAmounts')
+  group = models.ForeignKey(IngredientGroup,on_delete=models.CASCADE,default=None,related_name='ingredientAmounts')
 
   def __str__(self):
     if self.amount !=0 and self.unit !='':
-      return "%s : %s%s %s" % (self.rec,self.amount, self.unit, self.ingredient.name)
+      return "%s %s: %s%s %s" % (self.group.rec,self.group.name,self.amount, self.unit, self.ingredient.name)
     elif self.amount !=0 and self.unit =='':
-      return "%s : %s %s" % (self.rec, self.amount, self.ingredient.name)
-    return "%s : %s" % (self.rec, self.ingredient.name)
+      return "%s %s: %s %s" % (self.group.rec, self.group.name, self.amount, self.ingredient.name)
+    return "%s %s: %s" % (self.group.rec,self.group.name, self.ingredient.name)
 
 
 class Instruction(models.Model):
@@ -74,7 +84,7 @@ class Instruction(models.Model):
   rec =  models.ForeignKey(Recipe,on_delete=models.CASCADE,default=None, related_name='instructions')
 
   class Meta:
-    ordering =['step']
+    ordering =['rec','step']
 
   def __str__(self):
     return "%s : %s. %s" % (self.rec,self.step, self.description)

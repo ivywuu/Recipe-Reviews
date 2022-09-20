@@ -8,6 +8,11 @@
     <li><a href="{% url 'pantry' %}">Pantry</a></li>
     <li><a href="{% url 'tool' %}">Tools</a></li>
     <li><a href="{% url 'add-rec' %}">Reccomend a Recipe</a></li>
+
+    {% if request.user.is_authenticated %}
+    <li>
+      <a href="{% url 'add-recipe' %}">Add a Recipe</a>
+      {% endif %}</li>
   </ul>
 
   {% if request.user.is_authenticated %}
